@@ -1,0 +1,17 @@
+{
+  "name": "defnot",
+  "version": "1.0.0",
+  "description": "Discord Utility Bot for the KiwiTech Minecraft Servers",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "deploy-commands": "node src/deploy-commands.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "defnot",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/rest": "^1.0.1",
+    "discord.js": "^14.1.1"
+  }
+}
