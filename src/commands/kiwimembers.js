@@ -6,8 +6,6 @@ module.exports = {
     .setDescription('Lists all members of the KiwiTech Minecraft Server.'),
   async execute(interaction) {
     const kiwimembers = [];
-    discordmembers.array.forEach(element => {
-      
-    });
+    discordmembers.array.forEach((element) => {});
   },
 };
