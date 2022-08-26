@@ -6,11 +6,13 @@ const { clientId, guildId, token } = require('../config.json');
 
 const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
+const commandFiles = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith('.js'));
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
-  const command = require(filePath);
+  const command = require(filePath); // eslint-disable-line global-require
   commands.push(command.data.toJSON());
 }
 
