@@ -1,0 +1,6 @@
+{
+  "token": "Your Bot Token",
+  "clientId": "Your Client Id",
+  "guildId": "Your Guild Id",
+  "memberRoleId": "Your Role Id for Members that you want /kiwimembers to list"
+}
