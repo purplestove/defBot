@@ -10,6 +10,11 @@ module.exports = {
         .setName('input')
         .setDescription('Enter a string.')
         .setRequired(true)
+        .addChoices(
+          { name: 'choice1', value: 'choice1_value' },
+          { name: 'choice2', value: 'choice2_value' },
+          { name: 'choice3', value: 'choice3_value' }
+        )
     )
     .addIntegerOption((option) =>
       option.setName('int').setDescription('Enter a number.').setRequired(true)
