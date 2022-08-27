@@ -13,6 +13,7 @@ module.exports = {
 
     if (!targetUser) {
       await interaction.reply('Cannot find that user');
+      return;
     }
 
     const userTag = targetUser.user.tag;
