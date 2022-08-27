@@ -18,7 +18,7 @@ module.exports = {
       const KiwiMemberEmbed = await new EmbedBuilder()
         .setColor('#35aa78')
         .setAuthor({
-          name: 'defBot',
+          name: interaction.user.client.user.username,
           iconURL: interaction.user.client.user.displayAvatarURL(),
         })
         .setThumbnail(interaction.guild.iconURL())
