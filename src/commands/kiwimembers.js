@@ -28,8 +28,9 @@ module.exports = {
           text: `Requested by ${interaction.user.username}.`,
           iconURL: interaction.user.displayAvatarURL(),
         });
-
-      await interaction.reply({ embeds: [KiwiMemberEmbed] });
+      // deferReply() function might be needed, if all of the above tasks take longer than 3 seconds.
+      await interaction.deferReply();
+      await interaction.editReply({ embeds: [KiwiMemberEmbed] });
     } catch (err) {
       console.error(err);
     }
