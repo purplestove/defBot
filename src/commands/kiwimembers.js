@@ -10,7 +10,7 @@ module.exports = {
       await interaction.guild.members.fetch();
 
       const kiwiMembers = await interaction.guild.roles.cache
-        .get(guild.roles.member)
+        .get(guild.roleIds.member)
         .members.map((m) => m.user.username)
         .toString()
         .replaceAll(',', '\n');
