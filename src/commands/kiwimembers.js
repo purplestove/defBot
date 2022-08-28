@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { memberRoleId } = require('../../config.json');
+const { guild } = require('../../config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,7 +10,7 @@ module.exports = {
       await interaction.guild.members.fetch();
 
       const kiwiMembers = await interaction.guild.roles.cache
-        .get(memberRoleId)
+        .get(guild.roles.member)
         .members.map((m) => m.user.username)
         .toString()
         .replaceAll(',', '\n');
