@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "deploy-commands": "node src/deploy-commands.js",
+    "delete-commands": "node src/delete-commands.js",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix"
   },
