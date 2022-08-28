@@ -12,7 +12,7 @@ module.exports = {
     const targetUser = interaction.options.getMember('target');
 
     if (!targetUser) {
-      await interaction.reply('Cannot find that user');
+      await interaction.reply('Cannot find that user!');
       return;
     }
 
