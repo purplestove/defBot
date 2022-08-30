@@ -52,7 +52,7 @@ module.exports = {
 
       const serverEmbed = new EmbedBuilder({
         color: parseInt(embedColor),
-        title: `${interaction.guild.name} Server Info`,
+        title: `Server Info ${interaction.guild.name}`,
         thumbnail: {
           url: interaction.guild.iconURL(),
         },
@@ -116,7 +116,7 @@ module.exports = {
 
       const userEmbed = new EmbedBuilder({
         color: targetUser.roles.color?.color,
-        title: 'User Information',
+        title: 'User Info',
         thumbnail: { url: targetUser.user.displayAvatarURL() },
         fields: [
           { name: 'Username', value: targetUser.user.tag },
@@ -148,7 +148,55 @@ module.exports = {
 
       await interaction.reply({ embeds: [userEmbed] });
     } else if (interaction.options.getSubcommand() === 'members') {
-      // do another thing
+      if (
+        !Object.getOwnPropertyNames(guild.channelIds.botSpam)
+          .map((keys) => guild.channelIds.botSpam[keys])
+          .includes(interaction.channelId)
+      ) {
+        await interaction.reply({
+          content: 'You can only use this command in bot-spam channels!',
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.guild.members.fetch();
+
+      const minecraftMembers = interaction.guild.roles.cache
+        .get(guild.roleIds.member)
+        .members.map((m) => m.user.username)
+        .toString()
+        .replaceAll(',', '\n');
+
+      const minecraftMemberCount = interaction.guild.roles.cache
+        .get(guild.roleIds.member)
+        .members.map((m) => m.user.username).length;
+
+      const memberEmbed = new EmbedBuilder({
+        color: parseInt(embedColor),
+        title: `Member Info ${interaction.guild.name}`,
+        thumbnail: {
+          url: interaction.guild.iconURL(),
+        },
+        fields: [
+          {
+            name: 'Memberlist',
+            value: minecraftMembers,
+          },
+          {
+            name: 'Membercount',
+            value: minecraftMemberCount,
+          },
+        ],
+        footer: {
+          text: `Requested by ${interaction.user.username}.`,
+          iconURL: interaction.user.displayAvatarURL(),
+        },
+        timestamp: new Date().toISOString(),
+      });
+
+      await interaction.deferReply();
+      await interaction.editReply({ embeds: [memberEmbed] });
     }
   },
 };
