@@ -1,12 +1,22 @@
 {
   "bot": {
-    "token": "Your Bot Token",
-    "clientId": "Your Client Id"
+    "token": "Your Bot-Token",
+    "clientId": "Your ClientId"
   },
   "guild": {
-    "id": "Your Guild Id",
-    "roles": {
-      "member": "Your Role ID for Members of your Minecraft Server"
+    "guildId": "Your GuildId",
+    "roleIds": {
+      "member": "Your Member Role (of minecraft server members)",
+      "admin": "your admin/moderator role (users, that should be able to use /info user"
+    },
+    "channelIds": {
+      "general": "channelId where the invite-link should go to (has to be a text channel)",
+      "botSpam": {
+        "public": "public bot-spam channelId",
+        "member": "member bot-spam channelId",
+        "admin": "admin/moderator bot-spam channelId"
+      }
     }
-  }
+  },
+  "embedColor": "your embed color, hexcode prefixed with '0x' (example:0x35aa78)"
 }
