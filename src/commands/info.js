@@ -28,6 +28,7 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'server') {
+      // check, if the command is being used in a bot-spam channel
       if (
         !Object.getOwnPropertyNames(guild.channelIds.botSpam)
           .map((keys) => guild.channelIds.botSpam[keys])
@@ -39,6 +40,7 @@ module.exports = {
         });
         return;
       }
+      // create an invitelink, use the same if it already exits.
       const inviteLink = await interaction.guild.invites.create(
         guild.channelIds.general,
         {
@@ -80,7 +82,71 @@ module.exports = {
 
       await interaction.reply({ embeds: [serverEmbed] });
     } else if (interaction.options.getSubcommand() === 'user') {
-      // do something else
+      // check for admin role
+      if (!interaction.member.roles.cache.has(guild.roleIds.admin)) {
+        await interaction.reply({
+          content:
+            'You do not have the required permission to use this command!',
+          ephemeral: true,
+        });
+        return;
+      }
+      // check for correct channel
+      if (interaction.channelId !== guild.channelIds.botSpam.admin) {
+        await interaction.reply({
+          content: `You can only use this command in <#${guild.channelIds.botSpam.admin}>!`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const targetUser = interaction.options.getMember('target');
+
+      if (!targetUser) {
+        await interaction.reply({
+          content: 'Cannot find that user!',
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const roles = targetUser.roles.cache
+        .filter((role) => role.name !== '@everyone')
+        .sort((roleA, roleB) => roleB.positon - roleA.position);
+
+      const userEmbed = new EmbedBuilder({
+        color: targetUser.roles.color?.color,
+        title: 'User Information',
+        thumbnail: { url: targetUser.user.displayAvatarURL() },
+        fields: [
+          { name: 'Username', value: targetUser.user.tag },
+          { name: 'User ID', value: targetUser.user.id },
+          {
+            name: 'Joined Discord on',
+            value: `${time(targetUser.user.createdAt, 'D')}\n(${time(
+              targetUser.user.createdAt,
+              'R'
+            )})`,
+            inline: true,
+          },
+          {
+            name: 'Joined this server on',
+            value: `${time(targetUser.joinedAt, 'D')}\n(${time(
+              targetUser.joinedAt,
+              'R'
+            )})`,
+            inline: true,
+          },
+          { name: 'Roles', value: roles.toJSON().join(', ') || 'None' },
+        ],
+        footer: {
+          text: `Requested by ${interaction.user.username}.`,
+          iconURL: interaction.user.displayAvatarURL(),
+        },
+        timestamp: new Date().toISOString(),
+      });
+
+      await interaction.reply({ embeds: [userEmbed] });
     } else if (interaction.options.getSubcommand() === 'members') {
       // do another thing
     }
