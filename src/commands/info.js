@@ -28,7 +28,6 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'server') {
-      // check, if the command is being used in a bot-spam channel
       if (
         !Object.getOwnPropertyNames(guild.channelIds.botSpam)
           .map((keys) => guild.channelIds.botSpam[keys])
@@ -40,7 +39,7 @@ module.exports = {
         });
         return;
       }
-      // create an invitelink, use the same if it already exits.
+
       const inviteLink = await interaction.guild.invites.create(
         guild.channelIds.general,
         {
@@ -82,7 +81,6 @@ module.exports = {
 
       await interaction.reply({ embeds: [serverEmbed] });
     } else if (interaction.options.getSubcommand() === 'user') {
-      // check for admin role
       if (!interaction.member.roles.cache.has(guild.roleIds.admin)) {
         await interaction.reply({
           content:
@@ -91,7 +89,7 @@ module.exports = {
         });
         return;
       }
-      // check for correct channel
+
       if (interaction.channelId !== guild.channelIds.botSpam.admin) {
         await interaction.reply({
           content: `You can only use this command in <#${guild.channelIds.botSpam.admin}>!`,
