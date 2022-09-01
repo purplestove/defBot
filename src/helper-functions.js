@@ -7,3 +7,5 @@ exports.isBotSpamChannel = (channelId) => {
 
   return botSpamChannels.includes(channelId);
 };
+
+exports.isAdmin = (member) => member.roles.cache.has(guild.roleIds.admin);
