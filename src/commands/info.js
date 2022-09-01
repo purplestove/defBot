@@ -110,7 +110,7 @@ module.exports = {
 
       const roles = targetUser.roles.cache
         .filter((role) => role.name !== '@everyone')
-        .sort((roleA, roleB) => roleB.positon - roleA.position);
+        .sort((roleA, roleB) => roleB.position - roleA.position);
 
       const userEmbed = new EmbedBuilder({
         color: targetUser.roles.color?.color,
