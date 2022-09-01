@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, time } = require('discord.js');
 const { guild, embedColor } = require('../../config.json');
+const { isBotSpamChannel, isAdmin } = require('../helper-functions');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,11 +29,7 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'server') {
-      if (
-        !Object.getOwnPropertyNames(guild.channelIds.botSpam)
-          .map((keys) => guild.channelIds.botSpam[keys])
-          .includes(interaction.channelId)
-      ) {
+      if (!isBotSpamChannel) {
         await interaction.reply({
           content: 'You can only use this command in bot-spam channels!',
           ephemeral: true,
@@ -81,7 +78,7 @@ module.exports = {
 
       await interaction.reply({ embeds: [serverEmbed] });
     } else if (interaction.options.getSubcommand() === 'user') {
-      if (!interaction.member.roles.cache.has(guild.roleIds.admin)) {
+      if (!isAdmin(interaction.member)) {
         await interaction.reply({
           content:
             'You do not have the required permission to use this command!',
@@ -146,11 +143,7 @@ module.exports = {
 
       await interaction.reply({ embeds: [userEmbed] });
     } else if (interaction.options.getSubcommand() === 'members') {
-      if (
-        !Object.getOwnPropertyNames(guild.channelIds.botSpam)
-          .map((keys) => guild.channelIds.botSpam[keys])
-          .includes(interaction.channelId)
-      ) {
+      if (!isBotSpamChannel) {
         await interaction.reply({
           content: 'You can only use this command in bot-spam channels!',
           ephemeral: true,
