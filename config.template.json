@@ -11,6 +11,7 @@
     },
     "channelIds": {
       "general": "channelId where the invite-link should go to (has to be a text channel)",
+      "memberGeneral": "channelId where you greet your new members",
       "botSpam": {
         "public": "public bot-spam channelId",
         "member": "member bot-spam channelId",
