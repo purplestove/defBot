@@ -17,6 +17,11 @@
         "member": "member bot-spam channelId",
         "admin": "admin/moderator bot-spam channelId"
       }
+    },
+    "emojis": {
+      "kiwi": "<:Kiwi:928776335034286100>",
+      "owoKiwi": "<:OwOKiwi:929301552861151253>",
+      "froghypers": "<:froghypers:928802041592176681>"
     }
   },
   "embedColor": "your embed color, hexcode prefixed with '0x' (example:0x35aa78)"
