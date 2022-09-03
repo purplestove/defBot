@@ -21,3 +21,7 @@ Returns a list of **Members** of the Minecraft-Server with a **Membercount**.
 `/info user <username>`:
 
 Queries the Discord API for Information about the User such as their **User ID**, **Account creation time**, **Avatar** and their **Roles**.
+
+`/trialinfo <username>`:
+
+Posts an embed with **information about the server** for new trial members. The user also gets pinged. It will also **check for admin permission** and the **correct channel**.
