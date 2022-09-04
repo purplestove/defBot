@@ -29,7 +29,7 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'server') {
-      if (!isBotSpamChannel) {
+      if (!isBotSpamChannel(interaction.channelId)) {
         await interaction.reply({
           content: 'You can only use this command in bot-spam channels!',
           ephemeral: true,
