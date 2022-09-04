@@ -73,7 +73,7 @@ module.exports = {
           text: `Requested by ${interaction.user.username}.`,
           iconURL: interaction.user.displayAvatarURL(),
         },
-        timestamp: new Date().toISOString(),
+        timestamp: Date.now(),
       });
 
       await interaction.reply({ embeds: [serverEmbed] });
@@ -138,7 +138,7 @@ module.exports = {
           text: `Requested by ${interaction.user.username}.`,
           iconURL: interaction.user.displayAvatarURL(),
         },
-        timestamp: new Date().toISOString(),
+        timestamp: Date.now(),
       });
 
       await interaction.reply({ embeds: [userEmbed] });
@@ -183,7 +183,7 @@ module.exports = {
           text: `Requested by ${interaction.user.username}.`,
           iconURL: interaction.user.displayAvatarURL(),
         },
-        timestamp: new Date().toISOString(),
+        timestamp: Date.now(),
       });
 
       await interaction.deferReply();

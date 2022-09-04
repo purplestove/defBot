@@ -31,7 +31,7 @@ module.exports = {
         text: `Requested by ${interaction.user.username}.`,
         iconURL: interaction.user.displayAvatarURL(),
       },
-      timestamp: new Date().toISOString(),
+      timestamp: Date.now(),
     });
 
     if (choice === 'SMP') {
