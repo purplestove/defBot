@@ -13,6 +13,7 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    // this check is technically not necessary because you can limit the usage of the command in the server settings.
     if (!isAdmin(interaction.member)) {
       await interaction.reply({
         content: 'You do not have permission to use this command.',
@@ -20,7 +21,7 @@ module.exports = {
       });
       return;
     }
-
+    // this check also not necessary
     if (interaction.channelId !== guild.channelIds.memberGeneral) {
       await interaction.reply({
         content: `You can only use this command in <#${guild.channelIds.memberGeneral}>!`,
