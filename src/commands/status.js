@@ -1,5 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const util = require('minecraft-server-util');
+const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
+const { getServerStatus } = require('../helper-functions');
+const { server, embedColor } = require('../../config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -11,30 +12,63 @@ module.exports = {
         .setDescription('The server you want info about.')
         .setRequired(true)
         .addChoices(
-          { name: 'SMP', value: '\u200b' },
-          { name: 'CMP', value: '\u200b' },
-          { name: 'CMP2', value: '\u200b' },
-          { name: 'Copy', value: '\u200b' }
+          { name: 'SMP', value: 'SMP' },
+          { name: 'CMP', value: 'CMP' },
+          { name: 'CMP2', value: 'CMP2' },
+          { name: 'Copy', value: 'Copy' }
         )
     ),
   async execute(interaction) {
-    const serverChoice = interaction.options.getString('server');
+    const choice = interaction.options.getString('server');
 
-    if (serverChoice === 'SMP') {
+    const statusEmbed = new EmbedBuilder({
+      color: parseInt(embedColor),
+      title: `Kiwitech ${choice}`,
+      thumbnail: {
+        url: interaction.guild.iconURL(),
+      },
+      footer: {
+        text: `Requested by ${interaction.user.username}.`,
+        iconURL: interaction.user.displayAvatarURL(),
+      },
+      timestamp: new Date().toISOString(),
+    });
+
+    if (choice === 'SMP') {
       // do something
-    } else if (serverChoice === 'CMP') {
+    } else if (choice === 'CMP') {
       // do something else
-    } else if (serverChoice === 'CMP2') {
+    } else if (choice === 'CMP2') {
       // do something else
-    } else if (serverChoice === 'Copy') {
-      // do something else
-    } else {
-      await interaction.reply({
-        content: `Could not find the server: ${serverChoice}`,
-        ephemeral: true,
-      });
-      return;
+    } else if (choice === 'Copy') {
+      await interaction.deferReply();
+
+      try {
+        const result = await getServerStatus(server.copy.ip, server.copy.port);
+        const playerlist =
+          result.players.list.toString().replaceAll(',', '\n') ||
+          'There is currently nobody online!';
+
+        statusEmbed.addFields([
+          { name: 'Status', value: 'Online' },
+          { name: 'MOTD', value: result.motd.clean },
+          { name: 'Version', value: result.version },
+          {
+            name: 'Playercount',
+            value: `online: ${result.players.online} | max: ${result.players.max}`,
+          },
+          {
+            name: 'Playerlist',
+            value: playerlist,
+          },
+        ]);
+        await interaction.editReply({ embeds: [statusEmbed] });
+      } catch (err) {
+        console.error(err);
+        await interaction.editReply({
+          content: 'Server offline or unreachable!',
+        });
+      }
     }
-    await interaction.reply('test status command');
   },
 };
