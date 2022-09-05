@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
-const { getServerStatus } = require('../helper-functions');
+const { SlashCommandBuilder } = require('discord.js');
+const { getServerStatus, defaultEmbed } = require('../helper-functions');
 const { server, embedColor } = require('../../config.json');
 
 module.exports = {
@@ -21,18 +21,9 @@ module.exports = {
   async execute(interaction) {
     const choice = interaction.options.getString('server');
 
-    const statusEmbed = new EmbedBuilder({
-      color: parseInt(embedColor),
-      title: `Kiwitech ${choice}`,
-      thumbnail: {
-        url: interaction.guild.iconURL(),
-      },
-      footer: {
-        text: `Requested by ${interaction.user.username}.`,
-        iconURL: interaction.user.displayAvatarURL(),
-      },
-      timestamp: Date.now(),
-    });
+    const statusEmbed = defaultEmbed(interaction.user)
+      .setTitle(`KiwiTech ${choice}`)
+      .setThumbnail(interaction.guild.iconURL());
 
     if (choice === 'SMP') {
       // do something
