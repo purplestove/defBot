@@ -1,5 +1,6 @@
 const util = require('minecraft-server-util');
-const { guild } = require('../config.json');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { guild, embedColor } = require('../config.json');
 
 exports.isBotSpamChannel = (channelId) => {
   const botSpamChannels = Object.getOwnPropertyNames(
@@ -16,3 +17,13 @@ exports.getServerStatus = async (host, port) => {
   const response = await util.queryFull(host, port, options);
   return response;
 };
+
+exports.defaultEmbed = (user) =>
+  new EmbedBuilder({
+    color: parseInt(embedColor),
+    footer: {
+      text: `Requested by ${user.username}.`,
+      iconURL: user.displayAvatarURL(),
+    },
+    timestamp: Date.now(),
+  });
