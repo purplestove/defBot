@@ -1,6 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { getServerStatus, defaultEmbed } = require('../helper-functions');
-const { server, embedColor } = require('../../config.json');
+const {
+  getServerStatus,
+  buildDefaultEmbed,
+  toColumn,
+} = require('../helper-functions');
+const { server } = require('../../config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -19,9 +23,10 @@ module.exports = {
         )
     ),
   async execute(interaction) {
+    await interaction.deferReply();
     const choice = interaction.options.getString('server');
 
-    const statusEmbed = defaultEmbed(interaction.user)
+    const statusEmbed = buildDefaultEmbed(interaction.user)
       .setTitle(`KiwiTech ${choice}`)
       .setThumbnail(interaction.guild.iconURL());
 
@@ -32,31 +37,27 @@ module.exports = {
     } else if (choice === 'CMP2') {
       // do something else
     } else if (choice === 'Copy') {
-      await interaction.deferReply();
-
       try {
         const result = await getServerStatus(server.copy.ip, server.copy.port);
         const playerlist =
-          result.players.list.toString().replaceAll(',', '\n') ||
-          'There is currently nobody online!';
+          toColumn(result.players.list) || 'There is currently nobody online!';
 
         statusEmbed.addFields([
           { name: 'Status', value: 'Online' },
-          { name: 'MOTD', value: result.motd.clean },
           { name: 'Version', value: result.version },
           {
             name: 'Playercount',
-            value: `online: ${result.players.online} | max: ${result.players.max}`,
+            value: `online: **${result.players.online}** | max: **${result.players.max}**`,
           },
           {
             name: 'Playerlist',
             value: playerlist,
           },
         ]);
-        await interaction.editReply({ embeds: [statusEmbed] });
+        interaction.editReply({ embeds: [statusEmbed] });
       } catch (err) {
         console.error(err);
-        await interaction.editReply({
+        interaction.editReply({
           content: 'Server offline or unreachable!',
         });
       }
