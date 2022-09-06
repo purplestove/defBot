@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, time } = require('discord.js');
-const { guild, embedColor } = require('../../config.json');
+const { guild } = require('../../config.json');
 const { buildDefaultEmbed, toColumn } = require('../helper-functions');
 
 module.exports = {
@@ -59,7 +59,7 @@ module.exports = {
           },
         ]);
 
-      await interaction.reply({ embeds: [serverEmbed] });
+      interaction.reply({ embeds: [serverEmbed] });
     } else if (interaction.options.getSubcommand() === 'user') {
       const targetUser = interaction.options.getMember('target');
 
@@ -99,7 +99,7 @@ module.exports = {
         timestamp: Date.now(),
       });
 
-      await interaction.reply({ embeds: [userEmbed] });
+      interaction.reply({ embeds: [userEmbed] });
     } else if (interaction.options.getSubcommand() === 'members') {
       await interaction.deferReply();
       await interaction.guild.members.fetch();
@@ -128,30 +128,7 @@ module.exports = {
           },
         ]);
 
-      // const memberEmbed = new EmbedBuilder({
-      //   color: parseInt(embedColor),
-      //   title: `Member Info ${interaction.guild.name}`,
-      //   thumbnail: {
-      //     url: interaction.guild.iconURL(),
-      //   },
-      //   fields: [
-      //     {
-      //       name: 'Memberlist',
-      //       value: minecraftMembers,
-      //     },
-      //     {
-      //       name: 'Membercount',
-      //       value: minecraftMemberCount,
-      //     },
-      //   ],
-      //   footer: {
-      //     text: `Requested by ${interaction.user.username}.`,
-      //     iconURL: interaction.user.displayAvatarURL(),
-      //   },
-      //   timestamp: Date.now(),
-      // });
-
-      await interaction.editReply({ embeds: [memberEmbed] });
+      interaction.editReply({ embeds: [memberEmbed] });
     }
   },
 };
