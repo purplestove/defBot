@@ -4,11 +4,8 @@ const { guild, embedColor } = require('../config.json');
 
 exports.isAdmin = (member) => member.roles.cache.has(guild.roleIds.admin);
 
-exports.getServerStatus = async (host, port) => {
-  const options = { enableSRV: true };
-  const response = await util.queryFull(host, port, options);
-  return response;
-};
+exports.getServerStatus = (host, port) =>
+  util.queryFull(host, port, { enableSRV: true });
 
 exports.toColumn = (arr) => arr.toString().replaceAll(',', '\n');
 
