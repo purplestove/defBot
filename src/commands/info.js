@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, time } = require('discord.js');
 const { guild, embedColor } = require('../../config.json');
-const { isBotSpamChannel, isAdmin } = require('../helper-functions');
+const { buildDefaultEmbed, toColumn } = require('../helper-functions');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,14 +29,6 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'server') {
-      if (!isBotSpamChannel(interaction.channelId)) {
-        await interaction.reply({
-          content: 'You can only use this command in bot-spam channels!',
-          ephemeral: true,
-        });
-        return;
-      }
-
       const inviteLink = await interaction.guild.invites.create(
         guild.channelIds.general,
         {
@@ -46,16 +38,13 @@ module.exports = {
         }
       );
 
-      const serverEmbed = new EmbedBuilder({
-        color: parseInt(embedColor),
-        title: `Server Info ${interaction.guild.name}`,
-        thumbnail: {
-          url: interaction.guild.iconURL(),
-        },
-        fields: [
+      const serverEmbed = buildDefaultEmbed(interaction.user)
+        .setTitle(`Server Info ${interaction.guild.name}`)
+        .setThumbnail(interaction.guild.iconURL())
+        .addFields([
           {
             name: 'Membercount',
-            value: interaction.guild.memberCount,
+            value: `${interaction.guild.memberCount}`,
           },
           {
             name: 'Guild created',
@@ -68,42 +57,11 @@ module.exports = {
             name: 'Permanent Invite Link',
             value: inviteLink.url,
           },
-        ],
-        footer: {
-          text: `Requested by ${interaction.user.username}.`,
-          iconURL: interaction.user.displayAvatarURL(),
-        },
-        timestamp: Date.now(),
-      });
+        ]);
 
       await interaction.reply({ embeds: [serverEmbed] });
     } else if (interaction.options.getSubcommand() === 'user') {
-      if (!isAdmin(interaction.member)) {
-        await interaction.reply({
-          content:
-            'You do not have the required permission to use this command!',
-          ephemeral: true,
-        });
-        return;
-      }
-
-      if (interaction.channelId !== guild.channelIds.botSpam.admin) {
-        await interaction.reply({
-          content: `You can only use this command in <#${guild.channelIds.botSpam.admin}>!`,
-          ephemeral: true,
-        });
-        return;
-      }
-
       const targetUser = interaction.options.getMember('target');
-
-      if (!targetUser) {
-        await interaction.reply({
-          content: 'Cannot find that user!',
-          ephemeral: true,
-        });
-        return;
-      }
 
       const roles = targetUser.roles.cache
         .filter((role) => role.name !== '@everyone')
@@ -143,50 +101,56 @@ module.exports = {
 
       await interaction.reply({ embeds: [userEmbed] });
     } else if (interaction.options.getSubcommand() === 'members') {
-      if (!isBotSpamChannel) {
-        await interaction.reply({
-          content: 'You can only use this command in bot-spam channels!',
-          ephemeral: true,
-        });
-        return;
-      }
-
+      await interaction.deferReply();
       await interaction.guild.members.fetch();
 
-      const minecraftMembers = interaction.guild.roles.cache
-        .get(guild.roleIds.member)
-        .members.map((m) => m.user.username)
-        .toString()
-        .replaceAll(',', '\n');
+      const minecraftMembers = toColumn(
+        interaction.guild.roles.cache
+          .get(guild.roleIds.member)
+          .members.map((m) => m.user.username)
+      );
 
       const minecraftMemberCount = interaction.guild.roles.cache
         .get(guild.roleIds.member)
         .members.map((m) => m.user.username).length;
 
-      const memberEmbed = new EmbedBuilder({
-        color: parseInt(embedColor),
-        title: `Member Info ${interaction.guild.name}`,
-        thumbnail: {
-          url: interaction.guild.iconURL(),
-        },
-        fields: [
+      const memberEmbed = buildDefaultEmbed(interaction.user)
+        .setTitle(`Member Info ${interaction.guild.name}`)
+        .setThumbnail(interaction.guild.iconURL())
+        .addFields([
+          {
+            name: 'Membercount',
+            value: `${minecraftMemberCount}`,
+          },
           {
             name: 'Memberlist',
             value: minecraftMembers,
           },
-          {
-            name: 'Membercount',
-            value: minecraftMemberCount,
-          },
-        ],
-        footer: {
-          text: `Requested by ${interaction.user.username}.`,
-          iconURL: interaction.user.displayAvatarURL(),
-        },
-        timestamp: Date.now(),
-      });
+        ]);
 
-      await interaction.deferReply();
+      // const memberEmbed = new EmbedBuilder({
+      //   color: parseInt(embedColor),
+      //   title: `Member Info ${interaction.guild.name}`,
+      //   thumbnail: {
+      //     url: interaction.guild.iconURL(),
+      //   },
+      //   fields: [
+      //     {
+      //       name: 'Memberlist',
+      //       value: minecraftMembers,
+      //     },
+      //     {
+      //       name: 'Membercount',
+      //       value: minecraftMemberCount,
+      //     },
+      //   ],
+      //   footer: {
+      //     text: `Requested by ${interaction.user.username}.`,
+      //     iconURL: interaction.user.displayAvatarURL(),
+      //   },
+      //   timestamp: Date.now(),
+      // });
+
       await interaction.editReply({ embeds: [memberEmbed] });
     }
   },
