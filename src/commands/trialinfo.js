@@ -1,6 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { guild, embedColor } = require('../../config.json');
-const { isAdmin } = require('../helper-functions');
+const { SlashCommandBuilder } = require('discord.js');
+const { guild } = require('../../config.json');
+const { buildDefaultEmbed } = require('../helper-functions');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,31 +13,14 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
-    // this check is technically not necessary because you can limit the usage of the command in the server settings.
-    if (!isAdmin(interaction.member)) {
-      await interaction.reply({
-        content: 'You do not have permission to use this command.',
-        ephemeral: true,
-      });
-      return;
-    }
-    // this check also not necessary
-    if (interaction.channelId !== guild.channelIds.memberGeneral) {
-      await interaction.reply({
-        content: `You can only use this command in <#${guild.channelIds.memberGeneral}>!`,
-        ephemeral: true,
-      });
-      return;
-    }
     const target = interaction.options.getMember('target');
 
-    const trialEmbed = new EmbedBuilder({
-      color: parseInt(embedColor),
-      title: `${guild.emojis.kiwi}  Welcome to KiwiTech ${target.user.username}!  ${guild.emojis.kiwi}`,
-      thumbnail: {
-        url: target.user.displayAvatarURL(),
-      },
-      fields: [
+    const trialEmbed = buildDefaultEmbed(interaction.user)
+      .setTitle(
+        `${guild.emojis.kiwi}  Welcome to KiwiTech ${target.user.username}!  ${guild.emojis.kiwi}`
+      )
+      .setThumbnail(target.user.displayAvatarURL())
+      .addFields([
         {
           name: `${guild.emojis.owoKiwi}  Server Tour`,
           value:
@@ -59,13 +42,7 @@ module.exports = {
           name: '\u200b',
           value: `*The most important thing on KiwiTech is to have fun! If you have any questions, you can always ask us anything in member channels or ingame. We are also active in VC!*  ${guild.emojis.froghypers}`,
         },
-      ],
-      footer: {
-        text: `Requested by ${interaction.user.username}.`,
-        iconURL: interaction.user.displayAvatarURL(),
-      },
-      timestamp: Date.now(),
-    });
+      ]);
 
     await interaction.reply({
       content: `<@${target.user.id}>`,
