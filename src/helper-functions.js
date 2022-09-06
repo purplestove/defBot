@@ -1,14 +1,6 @@
 const util = require('minecraft-server-util');
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { guild, embedColor } = require('../config.json');
-
-exports.isBotSpamChannel = (channelId) => {
-  const botSpamChannels = Object.getOwnPropertyNames(
-    guild.channelIds.botSpam
-  ).map((key) => guild.channelIds.botSpam[key]);
-
-  return botSpamChannels.includes(channelId);
-};
 
 exports.isAdmin = (member) => member.roles.cache.has(guild.roleIds.admin);
 
@@ -18,7 +10,9 @@ exports.getServerStatus = async (host, port) => {
   return response;
 };
 
-exports.defaultEmbed = (user) =>
+exports.toColumn = (arr) => arr.toString().replaceAll(',', '\n');
+
+exports.buildDefaultEmbed = (user) =>
   new EmbedBuilder({
     color: parseInt(embedColor),
     footer: {
