@@ -49,7 +49,7 @@ module.exports = {
       embeds: [trialEmbed],
     });
 
-    await interaction.editReply({
+    interaction.editReply({
       content: '\u200b',
       embeds: [trialEmbed],
     });
