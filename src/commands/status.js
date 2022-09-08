@@ -3,6 +3,7 @@ const {
   getServerStatus,
   buildDefaultEmbed,
   toColumn,
+  queryMSPT,
 } = require('../helper-functions');
 const { server } = require('../../config.json');
 
@@ -35,18 +36,33 @@ module.exports = {
       const playerlist =
         toColumn(result.players.list) || 'There is currently nobody online!';
 
+      const { mspt, tps } = await queryMSPT(
+        server.copy.ip,
+        server.copy.rconPort,
+        server.copy.rconPassword
+      );
+
       const statusEmbed = buildDefaultEmbed(interaction.user)
         .setTitle(`KiwiTech ${choice}`)
         .setThumbnail(interaction.guild.iconURL())
         .addFields([
           { name: 'Status', value: 'Online' },
           { name: 'Version', value: result.version },
+          { name: 'Performance', value: `**${mspt}** mspt | **${tps}** TPS` },
           {
             name: 'Playercount',
             value: `online: **${result.players.online}** | max: **${result.players.max}**`,
           },
           { name: 'Playerlist', value: playerlist },
         ]);
+
+      statusEmbed.setColor('Green');
+
+      if (mspt > 25 && mspt < 50) {
+        statusEmbed.setColor('Yellow');
+      } else if (mspt >= 50) {
+        statusEmbed.setColor('Red');
+      }
 
       await interaction.editReply({ embeds: [statusEmbed] });
     } catch (err) {
