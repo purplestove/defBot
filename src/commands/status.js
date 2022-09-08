@@ -58,7 +58,7 @@ module.exports = {
 
       statusEmbed.setColor('Green');
 
-      if (mspt > 25 && mspt < 50) {
+      if (mspt > 30 && mspt < 50) {
         statusEmbed.setColor('Yellow');
       } else if (mspt >= 50) {
         statusEmbed.setColor('Red');
