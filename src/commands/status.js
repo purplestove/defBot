@@ -28,19 +28,14 @@ module.exports = {
     await interaction.deferReply();
 
     const choice = interaction.options.getString('server');
-    const { ip, port } = server[choice.toLowerCase()];
+    const { ip, port, rconPort, rconPassword } = server[choice.toLowerCase()];
 
     try {
       const result = await getServerStatus(ip, port);
+      const { mspt, tps } = await queryMSPT(ip, rconPort, rconPassword);
 
       const playerlist =
         toColumn(result.players.list) || 'There is currently nobody online!';
-
-      const { mspt, tps } = await queryMSPT(
-        server.copy.ip,
-        server.copy.rconPort,
-        server.copy.rconPassword
-      );
 
       const statusEmbed = buildDefaultEmbed(interaction.user)
         .setTitle(`KiwiTech ${choice}`)
