@@ -12,11 +12,11 @@ module.exports = {
         .setDescription('The server you want to run a command on.')
         .setRequired(true)
         .addChoices(
-          { name: 'SMP', value: 'SMP' },
-          { name: 'CMP', value: 'CMP' },
-          { name: 'CMP2', value: 'CMP2' },
-          { name: 'Copy', value: 'Copy' },
-          { name: 'Snapshots', value: 'Snapshots' }
+          { name: 'smp', value: 'smp' },
+          { name: 'cmp', value: 'cmp' },
+          { name: 'cmp2', value: 'cmp2' },
+          { name: 'copy', value: 'copy' },
+          { name: 'snapshots', value: 'snapshots' }
         )
     )
     .addStringOption((option) =>
@@ -32,7 +32,7 @@ module.exports = {
     const choice = interaction.options.getString('server');
     const command = interaction.options.getString('command');
 
-    const { ip, rconPort, rconPassword } = server[choice.toLowerCase()];
+    const { ip, rconPort, rconPassword } = server[choice];
 
     try {
       const response = await runRconCommand(
