@@ -45,3 +45,16 @@ exports.queryMSPT = async (host, port, rconPassword) => {
 
   return { mspt, tps };
 };
+
+exports.runRconCommand = async (host, rconPort, rconPassword, command) => {
+  const options = { timeout: 1000 * 5 };
+  const rcon = new util.RCON();
+
+  await rcon.connect(host, rconPort, options);
+  await rcon.login(rconPassword, options);
+
+  const data = await rcon.execute(command);
+
+  await rcon.close();
+  return data;
+};
