@@ -35,12 +35,9 @@ module.exports = {
     const { ip, rconPort, rconPassword } = server[choice];
 
     try {
-      const response = await runRconCommand(
-        ip,
-        rconPort,
-        rconPassword,
-        command
-      );
+      const response =
+        (await runRconCommand(ip, rconPort, rconPassword, command)) ||
+        `Command ran successfully, but there's no response.`;
 
       const maxMessageLength = 2000;
 
