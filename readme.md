@@ -6,6 +6,8 @@ Also, this is my first larger Coding Project and this repository will not only h
 
 _This project will - at a later stage - most likely be split up in multiple bots, so it can be more useable for other people._
 
+If you have any questions of want to discuss this project with me, consider joining my [Discord Server](https://discord.gg/wmJ3WBYcZF).
+
 ---
 
 ### Current features:
@@ -17,6 +19,10 @@ Returns **Membercount**, **Guild Icon**, **Creation Time** and a **permanent Inv
 `/info members`:
 
 Returns a list of **Members** of the Minecraft-Server with a **Membercount**.
+
+`/info admins`:
+
+Returns a list of **Admins** of the Minecraft-Server with a **Count**.
 
 `/info user <username>`:
 
