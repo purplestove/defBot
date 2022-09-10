@@ -109,6 +109,9 @@ module.exports = {
       const rcon = new util.RCON();
 
       try {
+        const whitelistCheck = [];
+        const opCheck = [];
+
         for (const s of props) {
           const { ip, rconPort, rconPassword } = server[s];
 
@@ -116,20 +119,26 @@ module.exports = {
           await rcon.login(rconPassword, options);
 
           const whitelistData = await rcon.execute(`whitelist remove ${ign}`);
-          console.log(whitelistData);
+          whitelistCheck.push(whitelistData);
 
           if (server[s].operator === true) {
             const opData = await rcon.execute(`deop ${ign}`);
-            console.log(opData);
+            opCheck.push(opData);
           }
           await rcon.close();
         }
 
-        await interaction.editReply(ign);
+        await interaction.editReply(
+          `Successfully removed ${inlineCode(ign)} from the whitelist on ${bold(
+            whitelistCheck.length
+          )} servers.\nSuccessfully removed ${inlineCode(
+            ign
+          )} as an operator on ${bold(opCheck.length)} servers.`
+        );
       } catch (err) {
         console.error(err);
         await interaction.editReply(
-          'Something went wrong trying to execute this command.'
+          'Something went wrong trying to execute this command! Please check if all servers are currently online.'
         );
       }
     } else if (interaction.options.getSubcommand() === 'list') {
