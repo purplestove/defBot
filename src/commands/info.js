@@ -31,6 +31,17 @@ module.exports = {
       subcommand
         .setName('admins')
         .setDescription('Lists the Admins of the KiwiTech Minecraft Servers.')
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('avatar')
+        .setDescription('Returns a users avatar image.')
+        .addUserOption((option) =>
+          option
+            .setName('target')
+            .setDescription('Select a user.')
+            .setRequired(true)
+        )
     ),
 
   async execute(interaction) {
@@ -150,20 +161,23 @@ module.exports = {
         .members.map((m) => m.user.username).length;
 
       const adminEmbed = buildDefaultEmbed(interaction.user)
-        .setTitle(`Member Info ${interaction.guild.name}`)
+        .setTitle(`Admin Info ${interaction.guild.name}`)
         .setThumbnail(interaction.guild.iconURL())
         .addFields([
           {
-            name: 'Membercount',
+            name: 'Admin Count',
             value: `${adminCount}`,
           },
           {
-            name: 'Memberlist',
+            name: 'Admin List',
             value: admins,
           },
         ]);
 
       interaction.editReply({ embeds: [adminEmbed] });
+    } else if (interaction.options.getSubcommand() === 'avatar') {
+      const targetUser = interaction.options.getMember('target');
+      interaction.reply(targetUser.user.displayAvatarURL({ size: 4096 }));
     }
   },
 };
