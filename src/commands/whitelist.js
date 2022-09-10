@@ -1,5 +1,10 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { buildDefaultEmbed, runRconCommand } = require('../helper-functions');
+const { SlashCommandBuilder, inlineCode, bold } = require('discord.js');
+const util = require('minecraft-server-util');
+const {
+  buildDefaultEmbed,
+  runRconCommand,
+  escapeMarkdown,
+} = require('../helper-functions');
 const { server } = require('../../config.json');
 
 module.exports = {
@@ -56,10 +61,77 @@ module.exports = {
     if (interaction.options.getSubcommand() === 'add') {
       const ign = interaction.options.getString('ign');
       const props = Object.getOwnPropertyNames(server);
-      console.log(props);
-      await interaction.editReply(ign);
+
+      const options = { timeout: 1000 * 5 };
+      const rcon = new util.RCON();
+
+      try {
+        const whitelistCheck = [];
+        const opCheck = [];
+
+        for (const s of props) {
+          const { ip, rconPort, rconPassword } = server[s];
+
+          await rcon.connect(ip, rconPort, options);
+          await rcon.login(rconPassword, options);
+
+          const whitelistData = await rcon.execute(`whitelist add ${ign}`);
+          whitelistCheck.push(whitelistData);
+
+          if (server[s].operator === true) {
+            const opData = await rcon.execute(`op ${ign}`);
+            opCheck.push(opData);
+          }
+          await rcon.close();
+        }
+
+        console.log(whitelistCheck);
+        console.log(opCheck);
+
+        await interaction.editReply(
+          `Successfully added ${inlineCode(ign)} to the whitelist on ${bold(
+            whitelistCheck.length
+          )} servers.\nSuccessfully made ${inlineCode(
+            ign
+          )} an operator on ${bold(opCheck.length)} servers.`
+        );
+      } catch (err) {
+        console.error(err);
+        await interaction.editReply(
+          'Something went wrong trying to execute this command! Please check if all servers are currently online.'
+        );
+      }
     } else if (interaction.options.getSubcommand() === 'remove') {
-      // do something else
+      const ign = interaction.options.getString('ign');
+      const props = Object.getOwnPropertyNames(server);
+
+      const options = { timeout: 1000 * 5 };
+      const rcon = new util.RCON();
+
+      try {
+        for (const s of props) {
+          const { ip, rconPort, rconPassword } = server[s];
+
+          await rcon.connect(ip, rconPort, options);
+          await rcon.login(rconPassword, options);
+
+          const whitelistData = await rcon.execute(`whitelist remove ${ign}`);
+          console.log(whitelistData);
+
+          if (server[s].operator === true) {
+            const opData = await rcon.execute(`deop ${ign}`);
+            console.log(opData);
+          }
+          await rcon.close();
+        }
+
+        await interaction.editReply(ign);
+      } catch (err) {
+        console.error(err);
+        await interaction.editReply(
+          'Something went wrong trying to execute this command.'
+        );
+      }
     } else if (interaction.options.getSubcommand() === 'list') {
       const choice = interaction.options.getString('server');
 
@@ -79,7 +151,11 @@ module.exports = {
         }
 
         const whitelistNames = response.split(': ');
-        const whitelist = whitelistNames[1].toString().replaceAll(', ', '\n');
+        const whitelist = whitelistNames[1]
+          .split(', ')
+          .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+          .map(escapeMarkdown)
+          .join('\n');
 
         const whitelistEmbed = buildDefaultEmbed(interaction.user)
           .setTitle(`${choice.toUpperCase()} Whitelist`)
