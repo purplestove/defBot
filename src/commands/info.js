@@ -26,7 +26,13 @@ module.exports = {
       subcommand
         .setName('members')
         .setDescription('Lists the Members of the KiwiTech Minecraft Servers.')
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('admins')
+        .setDescription('Lists the Admins of the KiwiTech Minecraft Servers.')
     ),
+
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'server') {
       const inviteLink = await interaction.guild.invites.create(
@@ -129,6 +135,35 @@ module.exports = {
         ]);
 
       interaction.editReply({ embeds: [memberEmbed] });
+    } else if (interaction.options.getSubcommand() === 'admins') {
+      await interaction.deferReply();
+      await interaction.guild.members.fetch();
+
+      const admins = toColumn(
+        interaction.guild.roles.cache
+          .get(guild.roleIds.admin)
+          .members.map((m) => m.user.username)
+      );
+
+      const adminCount = interaction.guild.roles.cache
+        .get(guild.roleIds.admin)
+        .members.map((m) => m.user.username).length;
+
+      const adminEmbed = buildDefaultEmbed(interaction.user)
+        .setTitle(`Member Info ${interaction.guild.name}`)
+        .setThumbnail(interaction.guild.iconURL())
+        .addFields([
+          {
+            name: 'Membercount',
+            value: `${adminCount}`,
+          },
+          {
+            name: 'Memberlist',
+            value: admins,
+          },
+        ]);
+
+      interaction.editReply({ embeds: [adminEmbed] });
     }
   },
 };
