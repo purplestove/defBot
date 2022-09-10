@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { buildDefaultEmbed } = require('../helper-functions');
+const { buildDefaultEmbed, runRconCommand } = require('../helper-functions');
+const { server } = require('../../config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -9,12 +10,12 @@ module.exports = {
       subcommand
         .setName('add')
         .setDescription(
-          'Add a Player to the Whitelist on all Minecraft Servers.'
+          'Adds a Player to the Whitelist on all Minecraft Servers.'
         )
         .addStringOption((option) =>
           option
-            .setName('IGN')
-            .setDescription('The Players In-Game-Name.')
+            .setName('ign')
+            .setDescription('The Players In-Game Name.')
             .setRequired(true)
         )
     )
@@ -22,25 +23,74 @@ module.exports = {
       subcommand
         .setName('remove')
         .setDescription(
-          'Remove a Player from the Whitelist on all Minecraft Servers.'
+          'Removes a Player from the Whitelist on all Minecraft Servers.'
         )
         .addStringOption((option) =>
           option
-            .setName('IGN')
-            .setDescription('The Players In-Game-Name.')
+            .setName('ign')
+            .setDescription('The Players In-Game Name.')
             .setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName('list').setDescription('Lists all whitelisted')
+      subcommand
+        .setName('list')
+        .setDescription('Returns the Whitelist.')
+        .addStringOption((option) =>
+          option
+            .setName('server')
+            .setDescription('The Server you want the Whitelist from.')
+            .setRequired(true)
+            .addChoices(
+              { name: 'smp', value: 'smp' },
+              { name: 'cmp', value: 'cmp' },
+              { name: 'cmp2', value: 'cmp2' },
+              { name: 'copy', value: 'copy' },
+              { name: 'snapshots', value: 'snapshots' }
+            )
+        )
     ),
   async execute(interaction) {
+    await interaction.deferReply();
+
     if (interaction.options.getSubcommand() === 'add') {
-      // do something
+      const ign = interaction.options.getString('ign');
+      const props = Object.getOwnPropertyNames(server);
+      console.log(props);
+      await interaction.editReply(ign);
     } else if (interaction.options.getSubcommand() === 'remove') {
       // do something else
     } else if (interaction.options.getSubcommand() === 'list') {
-      // do something else
+      const choice = interaction.options.getString('server');
+
+      const { ip, rconPort, rconPassword } = server[choice];
+
+      try {
+        const response = await runRconCommand(
+          ip,
+          rconPort,
+          rconPassword,
+          'whitelist list'
+        );
+
+        if (response === 'There are no whitelisted players') {
+          await interaction.editReply('There are no whitelisted players!');
+          return;
+        }
+
+        const whitelistNames = response.split(': ');
+        const whitelist = whitelistNames[1].toString().replaceAll(', ', '\n');
+
+        const whitelistEmbed = buildDefaultEmbed(interaction.user)
+          .setTitle(`${choice.toUpperCase()} Whitelist`)
+          .setThumbnail(interaction.guild.iconURL())
+          .setDescription(whitelist);
+
+        interaction.editReply({ embeds: [whitelistEmbed] });
+      } catch (err) {
+        console.error(err);
+        await interaction.editReply('Server offline or unreachable!');
+      }
     }
   },
 };
