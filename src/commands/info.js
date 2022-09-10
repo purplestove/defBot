@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, time } = require('discord.js');
 const { guild } = require('../../config.json');
-const { buildDefaultEmbed, toColumn } = require('../helper-functions');
+const { buildDefaultEmbed, escapeMarkdown } = require('../helper-functions');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -121,11 +121,12 @@ module.exports = {
       await interaction.deferReply();
       await interaction.guild.members.fetch();
 
-      const minecraftMembers = toColumn(
-        interaction.guild.roles.cache
-          .get(guild.roleIds.member)
-          .members.map((m) => m.user.username)
-      );
+      const minecraftMembers = interaction.guild.roles.cache
+        .get(guild.roleIds.member)
+        .members.map((m) => m.user.username)
+        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+        .map(escapeMarkdown)
+        .join('\n');
 
       const minecraftMemberCount = interaction.guild.roles.cache
         .get(guild.roleIds.member)
@@ -150,11 +151,12 @@ module.exports = {
       await interaction.deferReply();
       await interaction.guild.members.fetch();
 
-      const admins = toColumn(
-        interaction.guild.roles.cache
-          .get(guild.roleIds.admin)
-          .members.map((m) => m.user.username)
-      );
+      const admins = interaction.guild.roles.cache
+        .get(guild.roleIds.admin)
+        .members.map((m) => m.user.username)
+        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+        .map(escapeMarkdown)
+        .join('\n');
 
       const adminCount = interaction.guild.roles.cache
         .get(guild.roleIds.admin)
