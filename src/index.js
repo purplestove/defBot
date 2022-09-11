@@ -9,7 +9,11 @@ const {
 const { bot } = require('../config.json');
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildBans,
+  ],
   partials: [Partials.GuildMember],
 });
 
