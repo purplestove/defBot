@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { server } = require('../../config.json');
-const { queryScoreboard, buildDefaultEmbed } = require('../helper-functions');
+const { queryScoreboard } = require('../helper-functions');
 const { scoreboardToImage } = require('../image-functions');
 
 const choices = [
