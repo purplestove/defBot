@@ -45,3 +45,21 @@ exports.queryMSPT = async (host, port, rconPassword) => {
 
   return { mspt, tps };
 };
+
+exports.queryScoreboard = async (serverData, scoreboard) => {
+  const options = { timeout: 1000 * 5 };
+  const rcon = new util.RCON();
+
+  await rcon.connect(serverData.ip, serverData.rconPort, options);
+  await rcon.login(serverData.rconPassword, options);
+
+  const data = await rcon.execute(
+    `script run scores = []; for(system_info('server_whitelist'), put(scores, null, l('"' + _ + '"', scoreboard('${scoreboard}', _)) )); print(scores)`
+  );
+
+  await rcon.close();
+
+  const scores = data.split(' =')[0].replaceAll('null', 0);
+
+  return JSON.parse(scores);
+};
