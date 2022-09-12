@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, time } = require('discord.js');
 const { guild } = require('../../config.json');
-const { buildDefaultEmbed, toColumn } = require('../helper-functions');
+const { buildDefaultEmbed, escapeMarkdown } = require('../helper-functions');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -26,7 +26,24 @@ module.exports = {
       subcommand
         .setName('members')
         .setDescription('Lists the Members of the KiwiTech Minecraft Servers.')
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('admins')
+        .setDescription('Lists the Admins of the KiwiTech Minecraft Servers.')
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('avatar')
+        .setDescription('Returns a users avatar image.')
+        .addUserOption((option) =>
+          option
+            .setName('target')
+            .setDescription('Select a user.')
+            .setRequired(true)
+        )
     ),
+
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'server') {
       const inviteLink = await interaction.guild.invites.create(
@@ -104,11 +121,12 @@ module.exports = {
       await interaction.deferReply();
       await interaction.guild.members.fetch();
 
-      const minecraftMembers = toColumn(
-        interaction.guild.roles.cache
-          .get(guild.roleIds.member)
-          .members.map((m) => m.user.username)
-      );
+      const minecraftMembers = interaction.guild.roles.cache
+        .get(guild.roleIds.member)
+        .members.map((m) => m.user.username)
+        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+        .map(escapeMarkdown)
+        .join('\n');
 
       const minecraftMemberCount = interaction.guild.roles.cache
         .get(guild.roleIds.member)
@@ -129,6 +147,39 @@ module.exports = {
         ]);
 
       interaction.editReply({ embeds: [memberEmbed] });
+    } else if (interaction.options.getSubcommand() === 'admins') {
+      await interaction.deferReply();
+      await interaction.guild.members.fetch();
+
+      const admins = interaction.guild.roles.cache
+        .get(guild.roleIds.admin)
+        .members.map((m) => m.user.username)
+        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+        .map(escapeMarkdown)
+        .join('\n');
+
+      const adminCount = interaction.guild.roles.cache
+        .get(guild.roleIds.admin)
+        .members.map((m) => m.user.username).length;
+
+      const adminEmbed = buildDefaultEmbed(interaction.user)
+        .setTitle(`Admin Info ${interaction.guild.name}`)
+        .setThumbnail(interaction.guild.iconURL())
+        .addFields([
+          {
+            name: 'Admin Count',
+            value: `${adminCount}`,
+          },
+          {
+            name: 'Admin List',
+            value: admins,
+          },
+        ]);
+
+      interaction.editReply({ embeds: [adminEmbed] });
+    } else if (interaction.options.getSubcommand() === 'avatar') {
+      const targetUser = interaction.options.getMember('target');
+      interaction.reply(targetUser.user.displayAvatarURL({ size: 4096 }));
     }
   },
 };

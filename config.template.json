@@ -1,28 +1,63 @@
 {
   "bot": {
-    "token": "Your Bot-Token",
-    "clientId": "Your ClientId"
+    "token": "bot-token",
+    "clientId": "client id (found on the discord developers page)"
   },
   "guild": {
-    "guildId": "Your GuildId",
+    "guildId": "guild id",
     "roleIds": {
-      "member": "Your Member Role (of minecraft server members)",
-      "admin": "your admin/moderator role (users, that should be able to use /info user"
+      "member": "member role id",
+      "admin": "admin role id"
     },
     "channelIds": {
-      "general": "channelId where the invite-link should go to (has to be a text channel)",
-      "memberGeneral": "channelId where you greet your new members",
-      "botSpam": {
-        "public": "public bot-spam channelId",
-        "member": "member bot-spam channelId",
-        "admin": "admin/moderator bot-spam channelId"
-      }
+      "general": "public general channel id (the invite link will be sent here)",
+      "memberGeneral": "member-general channel id (the embed for new trial members will be sent here)",
+      "modsResources": "channel id for mods-resources",
+      "serverInfo": "server-info channel id (the channel that has ips of the server)",
+      "todoList": "todo-list channel id"
     },
     "emojis": {
-      "kiwi": "<:Kiwi:928776335034286100>",
-      "owoKiwi": "<:OwOKiwi:929301552861151253>",
-      "froghypers": "<:froghypers:928802041592176681>"
+      "kiwi": "kiwi emoji id (format: <:name:id>)",
+      "owoKiwi": "owoKiwi emoji id",
+      "froghypers": "froghypers emoji id"
     }
   },
-  "embedColor": "your embed color, hexcode prefixed with '0x' (example:0x35aa78)"
+  "embedColor": "your favorite embed color",
+  "server": {
+    "smp": {
+      "ip": "server ip",
+      "port": serverPort,
+      "rconPort": rconPort,
+      "rconPassword": "rcon password",
+      "operator": false
+    },
+    "cmp": {
+      "ip": "server ip",
+      "port": serverPort,
+      "rconPort": rconPort,
+      "rconPassword": "rcon password",
+      "operator": true
+    },
+    "cmp2": {
+      "ip": "server ip",
+      "port": serverPort,
+      "rconPort": rconPort,
+      "rconPassword": "rcon password",
+      "operator": true
+    },
+    "copy": {
+      "ip": "server ip",
+      "port": serverPort,
+      "rconPort": rconPort,
+      "rconPassword": "rcon password",
+      "operator": true
+    },
+    "snapshots": {
+      "ip": "server ip",
+      "port": serverPort,
+      "rconPort": rconPort,
+      "rconPassword": "rcon password",
+      "operator": true
+    }
+  }
 }

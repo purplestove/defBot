@@ -17,18 +17,18 @@ module.exports = {
         .setDescription('The server you want info about.')
         .setRequired(true)
         .addChoices(
-          { name: 'SMP', value: 'SMP' },
-          { name: 'CMP', value: 'CMP' },
-          { name: 'CMP2', value: 'CMP2' },
-          { name: 'Copy', value: 'Copy' },
-          { name: 'Snapshots', value: 'Snapshots' }
+          { name: 'smp', value: 'smp' },
+          { name: 'cmp', value: 'cmp' },
+          { name: 'cmp2', value: 'cmp2' },
+          { name: 'copy', value: 'copy' },
+          { name: 'snapshots', value: 'snapshots' }
         )
     ),
   async execute(interaction) {
     await interaction.deferReply();
 
     const choice = interaction.options.getString('server');
-    const { ip, port, rconPort, rconPassword } = server[choice.toLowerCase()];
+    const { ip, port, rconPort, rconPassword } = server[choice];
 
     try {
       const result = await getServerStatus(ip, port);
@@ -38,7 +38,7 @@ module.exports = {
         toColumn(result.players.list) || 'There is currently nobody online!';
 
       const statusEmbed = buildDefaultEmbed(interaction.user)
-        .setTitle(`KiwiTech ${choice}`)
+        .setTitle(`KiwiTech ${choice.toUpperCase()}`)
         .setThumbnail(interaction.guild.iconURL())
         .addFields([
           { name: 'Status', value: 'Online' },

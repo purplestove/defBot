@@ -7,7 +7,13 @@ exports.isAdmin = (member) => member.roles.cache.has(guild.roleIds.admin);
 exports.getServerStatus = (host, port) =>
   util.queryFull(host, port, { enableSRV: true });
 
-exports.toColumn = (arr) => arr.toString().replaceAll(',', '\n');
+exports.toColumn = (arr) => arr.join('\n');
+
+exports.escapeMarkdown = (text) => {
+  const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, '$1');
+  const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, '\\$1');
+  return escaped;
+};
 
 exports.buildDefaultEmbed = (user) =>
   new EmbedBuilder({
@@ -62,4 +68,17 @@ exports.queryScoreboard = async (serverData, scoreboard) => {
   const scores = data.split(' =')[0].replaceAll('null', 0);
 
   return JSON.parse(scores);
+};
+
+exports.runRconCommand = async (host, rconPort, rconPassword, command) => {
+  const options = { timeout: 1000 * 5 };
+  const rcon = new util.RCON();
+
+  await rcon.connect(host, rconPort, options);
+  await rcon.login(rconPassword, options);
+
+  const data = await rcon.execute(command);
+
+  await rcon.close();
+  return data;
 };
