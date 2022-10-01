@@ -1,4 +1,4 @@
-const objectivesJson = require('../Assets/dictionary-1.19.json');
+const objectivesJson = require('../assets/dictionary-1.19.json');
 
 const objectives = Object.keys(objectivesJson).map((key) => key);
 

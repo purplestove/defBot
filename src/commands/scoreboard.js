@@ -37,7 +37,6 @@ module.exports = {
 
     // TODO: scoreboard for a player only
     // TODO: same display as ingame (only 15 players) or full display
-    // TODO: remove bots ?
     // TODO: add custom objective
     const objective = interaction.options.getString('item');
     const action = interaction.options.getString('action');
